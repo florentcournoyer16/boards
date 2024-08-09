@@ -1,0 +1,291 @@
+/*
+ * Copyright (c) 2022 Embla Flatlandsmo <embla.flatlandsmo@gmail.com>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/dts-v1/;
+#include <nordic/nrf52840_qiaa.dtsi>
+#include "nrf52840_customboard-pinctrl.dtsi"
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/sensor/ina230.h>
+
+/ {
+	model = "nRF52840 Custom Board";
+	compatible = "udes,nrf52840_customboard";
+
+	chosen {
+		zephyr,console = &cdc_acm_uart0;
+		zephyr,shell-uart = &cdc_acm_uart0;
+		zephyr,uart-mcumgr = &cdc_acm_uart0;
+		zephyr,bt-mon-uart = &cdc_acm_uart0;
+		zephyr,bt-c2h-uart = &cdc_acm_uart0;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,ieee802154 = &ieee802154;
+		zephyr,code-partition = &slot0_partition;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led0: led_0 {
+			gpios = <&gpio0 29 0>;
+			label = "led0";
+		};
+
+		led1: led_1 {
+			gpios = <&gpio0 2 0>;
+			label = "led1";
+		};
+
+		led2: led_2 {
+			gpios = <&gpio1 15 0>;
+			label = "led2";
+		};
+		led3: led_3 {
+			gpios = <&gpio1 13 0>;
+			label = "led3";
+		};
+		led4: led_4 {
+			gpios = <&gpio1 10 0>;
+			label = "led4";
+		};
+	};
+
+	Input {
+		compatible = "gpio-keys";
+		CHRG_PG: CHRG_PG {
+			gpios = <&gpio1 1 (GPIO_ACTIVE_LOW)>;
+			label = "CHRG_PG";
+		};
+
+		CHRG_R: CHRG_Reset {
+			gpios = <&gpio1 2 (GPIO_ACTIVE_LOW)>;
+			label = "CHRG_Reset";
+		};
+
+		SD_Det: SD_Det {
+			gpios = <&gpio1 3 0>;
+			label = "SD_Det";
+		};
+
+		CHRG_INT: CHRG_INT {
+			gpios = <&gpio1 4 0>;
+			label = "CHRG_INT";
+		};
+
+		UWB_IRQ: UWB_IRQ {
+			gpios = <&gpio1 8 0>;
+			label = "UWB_IRQ";
+		};
+	};
+
+	Output {
+		compatible = "gpio-leds";
+		CHRG_CD: CHRG_CD {
+			gpios = <&gpio1 6 0>;
+			label = "CHRG_CD";
+		};
+
+		BOOST_EN: BOOST_EN {
+			gpios = <&gpio0 31 0>;
+			label = "BOOST_EN";
+		};
+
+		UWB_RESET: UWB_Reset {
+			gpios = <&gpio0 7 0>;
+			label = "UWB_Reset";
+		};
+
+		UWB_SHUTDOWN: UWB_SHUTDOWN {
+			gpios = <&gpio0 11 0>;
+			label = "UWB_SHUTDOWN";
+		};
+	};
+
+	/* These aliases are provided for compatibility with samples */
+	aliases {
+		led0 = &led0;
+    	led1 = &led1;
+    	led2 = &led2;
+    	led3 = &led3;
+    	led4 = &led4;
+		chrg-pg = &CHRG_PG;
+		chrg-r = &CHRG_R;
+		sd-det = &SD_Det;
+		chrg-int = &CHRG_INT;
+		uwb-irq = &UWB_IRQ;
+		chrg-cd = &CHRG_CD;
+		boost-en = &BOOST_EN;
+		uwb-r = &UWB_RESET;
+		uwb-shutdown = &UWB_SHUTDOWN;
+		watchdog0 = &wdt0;
+	};
+};
+
+&adc {
+	status = "okay";
+};
+
+&uicr {
+	gpio-as-nreset;
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	status = "okay";
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c0 {
+	compatible = "nordic,nrf-twi";
+	status = "okay";
+	pinctrl-0 = <&i2c0_default>;
+	pinctrl-1 = <&i2c0_sleep>;
+	pinctrl-names = "default", "sleep";
+	
+	ina_MCU: ina231@40 {
+		compatible = "ti,ina230";
+		reg = <0x40>;
+		status = "okay";
+		rshunt-micro-ohms = <30000>;
+		current-lsb-microamps = <10>;
+		adc-mode = "Bus and shunt voltage continuous";
+		vbus-conversion-time-us = <1100>;
+		vshunt-conversion-time-us = <1100>;
+		avg-count = <1>;
+		friendly-name = "INA_MCU_current";
+	};
+	ina_UWB: ina231@41 {
+		compatible = "ti,ina230";
+		reg = <0x41>;
+		status = "okay";
+		rshunt-micro-ohms = <30000>;
+		current-lsb-microamps = <10>;
+		adc-mode = "Bus and shunt voltage continuous";
+		vbus-conversion-time-us = <1100>;
+		vshunt-conversion-time-us = <1100>;
+		avg-count = <1>;
+		friendly-name = "INA_UWB_current";
+	};
+	ina_uSD: ina231@44 {
+		compatible = "ti,ina230";
+		reg = <0x44>;
+		status = "okay";
+		rshunt-micro-ohms = <30000>;
+		current-lsb-microamps = <10>;
+		adc-mode = "Bus and shunt voltage continuous";
+		vbus-conversion-time-us = <1100>;
+		vshunt-conversion-time-us = <1100>;
+		avg-count = <1>;
+		friendly-name = "INA_uSD_current";
+	};
+	ina_5V: ina231@45 {
+		compatible = "ti,ina230";
+		reg = <0x45>;
+		status = "okay";
+		rshunt-micro-ohms = <30000>;
+		current-lsb-microamps = <10>;
+		adc-mode = "Bus and Shunt Voltage single shot";
+		vbus-conversion-time-us = <1100>;
+		vshunt-conversion-time-us = <1100>;
+		avg-count = <16>;
+		friendly-name = "INA_5V_current";
+	};
+};
+	
+
+// SD card SPI
+&spi1 {
+	compatible = "nordic,nrf-spi";
+	status = "okay";
+	cs-gpios = <&gpio0 22 GPIO_ACTIVE_LOW>;
+	pinctrl-0 = <&spi1_default>;
+	pinctrl-1 = <&spi1_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	sdhc0: sdhc@0 {
+		compatible = "zephyr,sdhc-spi-slot";
+		reg = <0>;
+		status = "okay";
+		spi-max-frequency = <8000000>;
+		mmc {
+			compatible = "zephyr,sdmmc-disk";
+			status = "okay";
+		};
+	};
+};
+
+// UWB SPI
+&spi3 {
+    status = "okay";
+    pinctrl-0 = <&spi3_default>;
+	pinctrl-1 = <&spi3_sleep>;
+    pinctrl-names = "default", "sleep";
+    cs-gpios = <&gpio0 8 0>;
+};
+
+&ieee802154 {
+	status = "okay";
+};
+
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 0xc000>;
+		};
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0xc000 0x72000>;
+		};
+		slot1_partition: partition@7e000 {
+			label = "image-1";
+			reg = <0x7e000 0x72000>;
+		};
+		scratch_partition: partition@f0000 {
+			label = "image-scratch";
+			reg = <0xf0000 0xa000>;
+		};
+		storage_partition: partition@fa000 {
+			label = "storage";
+			reg = <0xfa000 0x6000>;
+		};
+	};
+};
+
+zephyr_udc0: &usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+};
+
+&power {
+	status = "okay";
+};
+
+&clock {
+	status = "okay";
+};

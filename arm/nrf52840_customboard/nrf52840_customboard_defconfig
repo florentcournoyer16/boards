@@ -1,0 +1,46 @@
+# SPDX-License-Identifier: Apache-2.0
+
+CONFIG_SOC_SERIES_NRF52X=y
+CONFIG_SOC_NRF52840_QIAA=y
+CONFIG_BOARD_NRF52840_CUSTOMBOARD=y
+
+# Enable MPU
+CONFIG_ARM_MPU=y
+
+# Enable SoC low frequency clock instead of external
+CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+
+# enable GPIO
+CONFIG_GPIO=y
+
+# enable uart driver
+# CONFIG_SERIAL=n (set in proj.conf)
+
+#Enable I2C
+CONFIG_I2C=y
+
+# Enable RTT
+# CONFIG_USE_SEGGER_RTT=y
+
+# enable console via RTT instead of uart
+CONFIG_CONSOLE=y
+# CONFIG_UART_CONSOLE=n (set in proj.conf)
+CONFIG_RTT_CONSOLE=y
+CONFIG_USE_SEGGER_RTT=y
+
+CONFIG_PINCTRL=y
+
+# SD card settings
+# Storage related
+CONFIG_SPI=y
+CONFIG_SPI_NRFX_RAM_BUFFER_SIZE=64
+
+# Filesystem
+CONFIG_DISK_ACCESS=y
+CONFIG_FILE_SYSTEM=y
+CONFIG_FAT_FILESYSTEM_ELM=y
+CONFIG_FS_FATFS_EXFAT=y
+
+# Add external flash
+CONFIG_DISK_DRIVER_SDMMC=y
+

@@ -1,0 +1,6 @@
+# nRF52840 Custom board configuration
+
+config BOARD_NRF52840_CUSTOMBOARD
+	bool "nRF52840 Custom Board"
+	depends on SOC_NRF52840_QIAA
+

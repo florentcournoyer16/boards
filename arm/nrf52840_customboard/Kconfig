@@ -1,0 +1,8 @@
+# nRF52840 Custom board configuration
+
+config BOARD_ENABLE_DCDC
+	bool "DCDC mode"
+	select SOC_DCDC_NRF52X
+	default y
+	depends on BOARD_NRF52840_CUSTOMBOARD
+
