@@ -101,6 +101,11 @@
 			gpios = <&gpio0 11 0>;
 			label = "UWB_SHUTDOWN";
 		};
+
+		UWB_CS: UWB_CS {
+			gpios = <&gpio0 8 0>;
+			label = "UWB_CS";
+		};
 	};
 
 	/* These aliases are provided for compatibility with samples */
@@ -133,6 +138,7 @@
 
 &gpiote {
 	status = "okay";
+	interrupts = <6>, <1>;
 };
 
 &gpio0 {
@@ -237,7 +243,7 @@
     pinctrl-0 = <&spi3_default>;
 	pinctrl-1 = <&spi3_sleep>;
     pinctrl-names = "default", "sleep";
-    cs-gpios = <&gpio0 8 0>;
+    // cs-gpios = <&gpio0 8 0>;
 };
 
 &ieee802154 {
@@ -288,4 +294,10 @@ zephyr_udc0: &usbd {
 
 &clock {
 	status = "okay";
+	interrupts = <0>, <NRF_DEFAULT_IRQ_PRIORITY>;
+};
+
+&timer0 {
+	status = "disabled";
+	interrupts = <8>, <1>;
 };
